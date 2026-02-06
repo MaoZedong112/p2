@@ -1,0 +1,31 @@
+
+
+console.log(import.meta.env.VITE_API_URL)
+
+const handleSubmit = async (
+  event: React.SubmitEvent<HTMLFormElement>,
+  table_name: string,
+) => {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const data = Object.fromEntries(formData.entries());
+
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/${table_name}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (response.ok) {
+    // const savedRecord = await response.json();
+    // setNewRecord([...idk, savedRecord]);
+    // setNewRecord({ Name: '',Description: '', Amount: '', CategoryID: ''});
+  }
+};
+
+const handleDelete = async (table_name: string, id: number) => {
+    const respose = await fetch(`${import.meta.env.VITE_API_URL}/${table_name}/${id}`, { method: "DELETE"})
+    return respose
+}
+
+export default {handleSubmit, handleDelete}
