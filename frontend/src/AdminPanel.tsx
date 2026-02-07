@@ -4,7 +4,8 @@ import Handlers from "./Handlers"
 function Admin() {
   
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>, table_name: string) => {
-        await Handlers.handleSubmit(e, table_name)
+       const response = await Handlers.handleSubmit(e, table_name)
+       console.log(response)
     }
 
     return (

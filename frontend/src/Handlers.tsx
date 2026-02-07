@@ -17,9 +17,7 @@ const handleSubmit = async (
   });
 
   if (response.ok) {
-    // const savedRecord = await response.json();
-    // setNewRecord([...idk, savedRecord]);
-    // setNewRecord({ Name: '',Description: '', Amount: '', CategoryID: ''});
+    return data
   }
 };
 
