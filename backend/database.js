@@ -55,6 +55,17 @@ DB.exec(
     )`
 )
 
+// DB.exec(
+//     `CREATE TRIGGER IF NOT EXISTS set_equipment_rented
+//     AFTER INSERT ON rentals
+//     FOR EACH ROW 
+//     BEGIN
+//         UPDATE equipment
+//         SET status = 'rented'
+//         WHERE id = NEW.equipmentID;
+//     END;`
+// )
+
 const getAllFromTable = (table_name) => {
     return DB.prepare(`SELECT * FROM ${table_name}`).all()
 }

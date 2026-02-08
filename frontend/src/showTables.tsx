@@ -9,7 +9,7 @@ type Props = {
 
 function ShowTables({ table_name, data, onDelete, onUpdate }: Props) {
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [editFormData, setEditFormData] = useState<any>({});
+  const [editFormData, setEditFormData] = useState([]);
 
   let keys: string[]
   if (data[0] != undefined && data[0] != null) {
@@ -30,7 +30,7 @@ function ShowTables({ table_name, data, onDelete, onUpdate }: Props) {
   };
 
   return (
-    <div>
+    <div id={table_name}>
       <h3>{`${table_name} list`}</h3>
       <table>
         <thead>

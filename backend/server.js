@@ -30,13 +30,13 @@ App.post("api/:table_name", async (c) => {
     const table_name = c.req.param("table_name");
     const data = await c.req.json();
 
-    try {
+    //try {
         const result = await DB.addRecord(table_name, data);
         return c.json(result, 201);
-    } 
-    catch (err) {
-        return c.json({ error: err.message }, 500);
-    }
+    // } 
+    // catch (err) {
+    //     return c.json({ error: err.message }, 500);
+    // }
 });
 
 App.put("api/:table_name/:id",async (c) => {
@@ -45,7 +45,7 @@ App.put("api/:table_name/:id",async (c) => {
 
     const data = await c.req.json();
     const result = DB.updateRecord(table_name, id, data);
-    
+
     return c.json(result, 201);
 })
 

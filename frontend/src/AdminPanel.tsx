@@ -11,14 +11,17 @@ function Admin() {
     });
 
     const fetchData = async (table_name: string) => {
-       const response = await fetch(`${import.meta.env.VITE_API_URL}/${table_name}`);
-       const json = await response.json();
-       setDataTables(prev => ({ ...prev, [table_name]: json }));
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/${table_name}`);
+            const json = await response.json();
+            setDataTables(prev => ({ ...prev, [table_name]: json }));
+        }
+        catch{ console.log("?")}
     };
 
     useEffect(() => {
       Object.keys(dataTables).forEach(table => fetchData(table))
-    }, []);
+    }, [dataTables]);
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>, table_name: string) => {
       const response = await Handlers.handleSubmit(e, table_name);
@@ -31,7 +34,7 @@ function Admin() {
     const handleDelete = async (table_name: string, id: number) => {
         const response = await Handlers.handleDelete(table_name, id);
         if (response.ok){
-            setDataTables(prev => ({...prev, [table_name]: prev[table_name].filter(item => item.id !== id)}))
+            await fetchData(table_name)
         }
     };
 
@@ -43,18 +46,23 @@ function Admin() {
         }
     }
 
+    const [selectedTable, setSelectedTable] = useState("users");
 
     return (
-        <div id="admin controls">
-            {Object.keys(dataTables).map(name => (
-                <ShowTables 
-                    key={name} 
-                    table_name={name} 
-                    data={dataTables[name]}
-                    onDelete={(id) => handleDelete(name, id)} 
-                    onUpdate={handleUpdate}
-                />
-            ))}
+        <div id="adminControls">
+            <select value={selectedTable} onChange={(e) => {setSelectedTable(e.target.value)}}>
+                <option value="users">users</option>
+                <option value="equipment">equipment</option>
+                <option value="categories">categories</option>
+                <option value="rentals">rentals</option>
+            </select>
+            <ShowTables  
+                table_name={selectedTable} 
+                data={dataTables[selectedTable]}
+                onDelete={(id) => handleDelete(selectedTable, id)} 
+                onUpdate={handleUpdate}
+            />
+
             <hr></hr>
             <form onSubmit={(e) => handleSubmit(e, "users")}>
                 <h2>User</h2>
