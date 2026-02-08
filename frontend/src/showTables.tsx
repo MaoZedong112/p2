@@ -1,32 +1,33 @@
+import { useState } from "react";
 
-import Handlers from "./Handlers"
-import { useState, useEffect } from "react";
+type Props = { 
+  table_name: string, 
+  data: [],
+  onDelete: (id: number) => void,
+  onUpdate: (table_name: string, id: number, data: []) => void
+};
 
-type Props = { table_name: string; };
+function ShowTables({ table_name, data, onDelete, onUpdate }: Props) {
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editFormData, setEditFormData] = useState<any>({});
 
-function ShowTables({ table_name }: Props) {
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch(`http://localhost:3003/api/${table_name}`);
-      const json = await res.json();
-      setData(json);
-    };
-    fetchData();
-  }, [table_name]);
-
-  let keys;
-  if (data[0] != undefined || data[0] != null) {
+  let keys: string[]
+  if (data[0] != undefined && data[0] != null) {
     keys = Object.keys(data[0]);
-  } else keys = [];
-
-  const handleDelete = (table_name: string, id: number) => {
-    Handlers.handleDelete(table_name, id);
-
-    setData((prev) => prev.filter((item) => item.id !== id));
-  };
+  }
+  else {keys = [];}
 
   // const keys = data.length > 0 ? Object.keys(data[0]) : [];
+
+  const startEdit = (item) => {
+    setEditingId(item.id);
+    setEditFormData(item); // Pre-fill with existing data
+  };
+
+  const handleSave = (id: number) => {
+    onUpdate(table_name, id, editFormData);
+    setEditingId(null);
+  };
 
   return (
     <div>
@@ -43,16 +44,27 @@ function ShowTables({ table_name }: Props) {
           {data.map((item) => (
             <tr key={item.id}>
               {keys.map((key) => (
-                <td key={key}>{item[key]}</td>
+                <td key={key}>
+                  {editingId === item.id ? (
+                    <input
+                      value={editFormData[key] || ""}
+                      onChange={(e) => setEditFormData({ ...editFormData, [key]: e.target.value })}
+                    />
+                  ) : (item[key])}
+                </td>
               ))}
               <td>
-                <button
-                  onClick={() => {
-                    handleDelete(table_name, item.id);
-                  }}
-                >
-                  Delete
-                </button>
+                {editingId === item.id ? (
+                  <>
+                    <button onClick={() => handleSave(item.id)}>Save</button>
+                    <button onClick={() => setEditingId(null)}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => startEdit(item)}>Edit</button>
+                    <button onClick={() => onDelete(item.id)}>Delete</button>
+                  </>
+                )}
               </td>
             </tr>
           ))}

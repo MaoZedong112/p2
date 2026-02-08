@@ -39,21 +39,15 @@ App.post("api/:table_name", async (c) => {
     }
 });
 
-// App.post("api/users",async (c) => {
-//     const { name,email,role,created_at } = await c.req.json();
-//     const info = DB.addRecord("users", { name,email,role,created_at } );
+App.put("api/:table_name/:id",async (c) => {
+    const table_name = c.req.param('table_name');
+    const id = c.req.param('id');
+
+    const data = await c.req.json();
+    const result = DB.updateRecord(table_name, id, data);
     
-
-//     return c.json({ id: info.lastInsertRowid, name, email, role, created_at });
-// })
-
-// App.post("api/equipment",async (c) => {
-//     const { name,categoryID,status,image_url,created_at } = await c.req.json();
-//     const info = DB.addRecord("equipment",);
-    
-
-//     return c.json({ id: info.lastInsertRowid, name, email, role, created_at });
-// })
+    return c.json(result, 201);
+})
 
 
 

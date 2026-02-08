@@ -20,4 +20,5 @@ let table_name = "users"
 const stmt = `INSERT INTO ${table_name} (${columns}) VALUES (${placeholders})`;
 
 console.log(stmt)
-console.log(...values)
+console.log(values)
+

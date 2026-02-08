@@ -1,19 +1,60 @@
 import ShowTables from "./showTables";
 import Handlers from "./Handlers"
+import { useState, useEffect } from "react";
 
 function Admin() {
-  
+    const [dataTables, setDataTables] = useState<{ [key: string] : []}>({
+        users: [],
+        equipment: [],
+        categories: [],
+        rentals: []
+    });
+
+    const fetchData = async (table_name: string) => {
+       const response = await fetch(`${import.meta.env.VITE_API_URL}/${table_name}`);
+       const json = await response.json();
+       setDataTables(prev => ({ ...prev, [table_name]: json }));
+    };
+
+    useEffect(() => {
+      Object.keys(dataTables).forEach(table => fetchData(table))
+    }, []);
+
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>, table_name: string) => {
-       const response = await Handlers.handleSubmit(e, table_name)
-       console.log(response)
+      const response = await Handlers.handleSubmit(e, table_name);
+      if (response) {
+        // setDataTables(prev => ({ ...prev, [table_name]: [...prev[table_name], response] })); 
+        await fetchData(table_name)
+      }
+    };
+
+    const handleDelete = async (table_name: string, id: number) => {
+        const response = await Handlers.handleDelete(table_name, id);
+        if (response.ok){
+            setDataTables(prev => ({...prev, [table_name]: prev[table_name].filter(item => item.id !== id)}))
+        }
+    };
+
+    const handleUpdate = async(table_name: string, id: number, data: []) => {
+        const response = await Handlers.handleUpdate(table_name,id,data)
+
+        if (response.ok){
+            fetchData(table_name)
+        }
     }
+
 
     return (
         <div id="admin controls">
-            <ShowTables table_name = "users" />
-            <ShowTables table_name = "equipment" />
-            <ShowTables table_name = "categories" />
-            <ShowTables table_name = "rentals" />
+            {Object.keys(dataTables).map(name => (
+                <ShowTables 
+                    key={name} 
+                    table_name={name} 
+                    data={dataTables[name]}
+                    onDelete={(id) => handleDelete(name, id)} 
+                    onUpdate={handleUpdate}
+                />
+            ))}
             <hr></hr>
             <form onSubmit={(e) => handleSubmit(e, "users")}>
                 <h2>User</h2>

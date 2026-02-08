@@ -15,9 +15,8 @@ const handleSubmit = async (
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-
   if (response.ok) {
-    return data
+    return response.json();
   }
 };
 
@@ -26,4 +25,14 @@ const handleDelete = async (table_name: string, id: number) => {
     return respose
 }
 
-export default {handleSubmit, handleDelete}
+const handleUpdate = async(table_name: string, id: number, data: []) => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/${table_name}/${id}`, { 
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+
+    return response
+}
+
+export default {handleSubmit, handleDelete, handleUpdate}

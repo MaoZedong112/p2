@@ -55,11 +55,6 @@ DB.exec(
     )`
 )
 
-// DB.exec(
-//     `INSERT INTO users (name, email, role, created_at) VALUES ('Jeffrey Epstein', 'pizza.party@gmail.com', 'user', '2018-01-10 14:30:00');`
-// )
-
-
 const getAllFromTable = (table_name) => {
     return DB.prepare(`SELECT * FROM ${table_name}`).all()
 }
@@ -101,5 +96,14 @@ const updateRentals = (id,name,equipmentID,userID,rented_at,return_date,returned
     ).run(name,equipmentID,userID,rented_at,return_date,returned_at,status,id)
 };
 
+const updateRecord = (table_name, id, data) => {
+    const columns = Object.keys(data).map(key => `${key} = ?`) .join(", ");
 
-export default {deleteRecord, getAllFromTable, addRecord, updateUsers,updateCategories,updateEquipment,updateRentals}
+    const values = Object.values(data);
+
+    const stmt = DB.prepare(`UPDATE ${table_name} SET ${columns} WHERE id = ?`)
+
+    return stmt.run(...values, id)
+}
+
+export default {deleteRecord, getAllFromTable, addRecord, updateUsers,updateCategories,updateEquipment,updateRentals,updateRecord}
